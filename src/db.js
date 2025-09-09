@@ -15,7 +15,7 @@ class Database {
 
 
 
-        const dbPath = inMemory ? ":memory:" : path.join(dataDir, "urls.db");
+        const dbpath = inMemory ? ":memory:" : path.join(dataDir, "urls.db");
         this.db = new sqlite3.Database(dbpath);
 
         this.db.serialize(() => {
@@ -27,7 +27,7 @@ class Database {
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )
         `);
-            this.db.run(`CREATE INDEX IF NOT EXIST idx_urls_code ON urls(code)`);
+            this.db.run(`CREATE INDEX IF NOT EXISTS idx_urls_code ON urls(code)`);
         });
 
         Database.instance = this;

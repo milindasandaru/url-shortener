@@ -9,13 +9,13 @@ function createUrl(code, url) {
     });
 }
 
-function findBYCode(code) {
-    return new promis((resolve, reject) => {
-        db.get(`SELECT * FROM urls WHERE code = ?`, [code], (error, row) => {
+function findByCode(code) {
+    return new Promise((resolve, reject) => {
+        db.get(`SELECT * FROM urls WHERE code = ?`, [code], (err, row) => {
             if (err) return reject(err);
             resolve(row || null);
         });
     });
 }
 
-module.exports = { createUrl, findBYCode };
+module.exports = { createUrl, findByCode };

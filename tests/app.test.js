@@ -1,10 +1,10 @@
 const request = require("supertest");
 const app = require("../src/app");
 
-describe("URL Shortener APU", () => {
+describe("URL Shortener API", () => {
     it("health check works", async () => {
         const res = await request(app).get("/health");
-        expect(res.status).toBE(200);
+    expect(res.status).toBe(200);
         expect(res.body.ok).toBe(true);
     });
 

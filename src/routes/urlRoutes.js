@@ -1,8 +1,7 @@
 const express = require("express");
-const { z } = require("zod");
+const { z, ZodError } = require("zod");
 const { nanoid } = require("nanoid");
-const { urlRepo } = require("../repo/urlRepo");
-const { nan } = require("zod/v4");
+const { createUrl, findByCode } = require("../repo/urlRepo");
 
 const router = express.Router();
 
@@ -16,10 +15,10 @@ router.post("/shorten", async (req, res) => {
         const { url } = bodySchema.parse(req.body);
         const code = nanoid(6);
         await createUrl(code, url);
-        const base = process.env.PUBLIC_BASIC_URL || `http://localhost:${process.env.PORT || 3000}`;
+    const base = process.env.PUBLIC_BASE_URL || process.env.PUBLIC_BASIC_URL || `http://localhost:${process.env.PORT || 3000}`;
         res.json({ shortUrl: `${base}/${code}`, code });
     } catch (e) {
-        if (e.errors) return res.status(400).json({ error: e.errors.map(err => err.message).join(", ") });
+        if (e instanceof ZodError) return res.status(400).json({ error: e.issues.map(issue => issue.message).join(", ") });
         if (e.code === "SQLITE_CONSTRAINT") return res.status(409).json({ error: "Code already exists." });
         res.status(500).json({ error: "Server error" });
     }
@@ -27,10 +26,14 @@ router.post("/shorten", async (req, res) => {
 
 // GET /:code -> 302 redirect
 router.get("/:code", async (req, res) => {
-    const { code } = eq.params;
-    const row = await findBYCode(code);
-    if (!row) return res.status(404).send("Not Found");
-    res.redirect(row.url);
+    try {
+        const { code } = req.params;
+        const row = await findByCode(code);
+        if (!row) return res.status(404).send("Not Found");
+        res.redirect(row.url);
+    } catch (e) {
+        res.status(500).json({ error: "Server error" });
+    }
 });
 
 module.exports = router;
