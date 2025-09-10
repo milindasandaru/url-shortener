@@ -1,0 +1,31 @@
+# Node modules & caches
+node_modules
+npm-debug.log
+yarn-error.log
+.pnpm-store
+
+# Environment & config files
+.env
+.env.*
+*.local
+
+# Logs
+logs
+*.log
+
+# Test & coverage
+coverage
+tests
+__tests__
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Docker itself
+Dockerfile
+.dockerignore
